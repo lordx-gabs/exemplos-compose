@@ -1,5 +1,6 @@
 package com.example.testecompose.ui.features.login
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +12,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -23,14 +26,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.collections.mutableListOf
 
 @Composable
 fun LoginScreen(onNavigationToMain: (user: String) -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val users = remember { mutableStateListOf<String>() }
+    var refreshUsers by remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
 
-    Column (
+    LaunchedEffect(refreshUsers) {
+        users.addAll(testCoroutines())
+    }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
@@ -76,7 +93,7 @@ fun LoginScreen(onNavigationToMain: (user: String) -> Unit) {
 
         Button(
             onClick = {
-                if(email.isEmpty() || password.isEmpty()) {
+                if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(context, "Preencha os campos!", Toast.LENGTH_SHORT).show()
                     return@Button
                 }
@@ -90,6 +107,16 @@ fun LoginScreen(onNavigationToMain: (user: String) -> Unit) {
             Text("Login")
         }
     }
+}
+
+private suspend fun testCoroutines(): List<String> = withContext(IO) {
+    Log.i("testCoroutines", "thread ${Thread.currentThread()}")
+    delay(4300)
+    listOf(
+        "arroz",
+        "feijao",
+        "batata"
+    )
 }
 
 @Preview
