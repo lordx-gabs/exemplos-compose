@@ -32,6 +32,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.collections.mutableListOf
+import kotlin.time.Duration.Companion.microseconds
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun LoginScreen(onNavigationToMain: (user: String) -> Unit) {
@@ -111,7 +113,7 @@ fun LoginScreen(onNavigationToMain: (user: String) -> Unit) {
 
 private suspend fun testCoroutines(): List<String> = withContext(IO) {
     Log.i("testCoroutines", "thread ${Thread.currentThread()}")
-    delay(4300)
+    delay(4300.microseconds)
     listOf(
         "arroz",
         "feijao",
