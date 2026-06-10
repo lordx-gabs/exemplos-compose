@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.BottomAppBar
@@ -45,8 +47,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TesteComposeTheme {
-//                AppNavHost(rememberNavController())
-                FormScreen()
+                AppNavHost(rememberNavController())
+                //FormScreen()
             }
         }
     }
@@ -140,6 +142,20 @@ fun HomeCanvas() {
                 strokeWidth = 8f
             )
         }
+    }
+}
+
+@Composable
+fun PagerExample(modifier: Modifier = Modifier) {
+    val pageState = rememberPagerState(pageCount = {
+        20
+    })
+
+    VerticalPager(
+        state = pageState,
+        modifier = Modifier.fillMaxSize()
+    ) { page ->
+        Text(text = "Page: $page")
     }
 }
 

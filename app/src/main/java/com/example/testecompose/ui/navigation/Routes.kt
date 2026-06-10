@@ -6,6 +6,15 @@ import kotlinx.serialization.Serializable
 object Login
 
 @Serializable
-data class Main(
+object Main
+
+@Serializable
+data class Details(
     val name: String?
 )
+
+@Serializable
+object AuthGraph
+
+@Serializable
+object MainGraph
