@@ -10,7 +10,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 
 @Composable
-fun AppNavHost(navHostController: NavHostController) {
+fun AppNavHost(
+    navHostController: NavHostController
+) {
     NavHost(
         navController = navHostController,
         startDestination = AuthGraph,

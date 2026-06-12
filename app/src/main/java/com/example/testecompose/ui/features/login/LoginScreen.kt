@@ -2,7 +2,6 @@ package com.example.testecompose.ui.features.login
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,20 +19,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.collections.mutableListOf
 import kotlin.time.Duration.Companion.microseconds
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun LoginScreen(onNavigationToMain: (user: String) -> Unit) {
@@ -51,8 +45,7 @@ fun LoginScreen(onNavigationToMain: (user: String) -> Unit) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(
             8.dp,
             Alignment.CenterVertically
@@ -121,7 +114,7 @@ private suspend fun testCoroutines(): List<String> = withContext(IO) {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun LoginPreview() {
     LoginScreen(onNavigationToMain = {})

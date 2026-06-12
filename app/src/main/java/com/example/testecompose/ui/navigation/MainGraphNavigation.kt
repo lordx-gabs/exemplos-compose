@@ -14,7 +14,9 @@ fun NavGraphBuilder.mainGraph(
         startDestination = Main
     ) {
         composable<Main> {
-            MainScreen(onNavigationToLogin = onNavigateToAuthGraph)
+            MainScreen(
+                onNavigationToLogin = onNavigateToAuthGraph,
+            )
         }
     }
 }
