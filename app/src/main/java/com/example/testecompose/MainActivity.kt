@@ -30,19 +30,29 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +69,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.testecompose.ui.ThemeViewModel
 import com.example.testecompose.ui.navigation.AppNavHost
 import com.example.testecompose.ui.theme.TesteComposeTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -197,7 +210,12 @@ fun HomeScaffold() {
     var showDialog by remember {
         mutableStateOf(false)
     }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
         topBar = {
             TopAppBar(
                 title = {
@@ -215,6 +233,31 @@ fun HomeScaffold() {
                         imageVector = Icons.Rounded.Home,
                         contentDescription = null
                     )
+                    Icon(
+                        modifier = Modifier
+                            .clickable {
+                                scope.launch {
+                                    val result = snackbarHostState.showSnackbar(
+                                        message = "Teste snackbar",
+                                        actionLabel = "desfazer",
+                                        withDismissAction = true,
+                                        duration = SnackbarDuration.Short
+                                    )
+                                    when (result) {
+                                        SnackbarResult.Dismissed -> TODO()
+                                        SnackbarResult.ActionPerformed -> {
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "Snackbar desfeita"
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                        imageVector = Icons.Rounded.Smartphone,
+                        contentDescription = null
+                    )
                 }
             )
         },
@@ -227,15 +270,27 @@ fun HomeScaffold() {
         }
     ) { innerPadding ->
         val scrollState = rememberScrollState()
+        var isRefreshing by remember { mutableStateOf(false) }
+//        val pullToRefreshState = rememberPullToRefreshState()
         val count = 15
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                scope.launch {
+                    isRefreshing = true
+                    delay(3000.milliseconds)
+                    isRefreshing = false
+                }
+            },
             modifier = Modifier
-                .padding(innerPadding),
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
-            items(count) { position ->
-                GetColumnOfTexts()
+            LazyColumn {
+                items(count) { position ->
+                    GetColumnOfTexts()
+                }
             }
-        }
 //        LazyVerticalGrid(
 //            modifier = Modifier
 //                .padding(innerPadding),
@@ -255,17 +310,17 @@ fun HomeScaffold() {
 //                GetColumnOfTexts()
 //            }
 //        }
-
-        if(showDialog) {
-            Dialog(
-                onDismissRequest = {
-                    showDialog = false
-                }
-            ) {
-                Card(
-                    modifier = Modifier.size(200.dp)
+            if (showDialog) {
+                Dialog(
+                    onDismissRequest = {
+                        showDialog = false
+                    }
                 ) {
-                    Text("TesteDialog")
+                    Card(
+                        modifier = Modifier.size(200.dp)
+                    ) {
+                        Text("TesteDialog")
+                    }
                 }
             }
         }
